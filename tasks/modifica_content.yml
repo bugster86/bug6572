@@ -8,6 +8,7 @@
 - name: "Inserisco la sezione mp3 nel file {{ item }} "
   blockinfile:
         backup: true
+        marker: "# {mark} BUG6572"
         path: "{{ item }}"
         block: |
                 audio/mpeg: \
