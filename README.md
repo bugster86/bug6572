@@ -12,7 +12,7 @@ audio/mpeg: \
         icon=mp3
 
 
-Questa sezione permette di mappare il content type per i file di tipo .mp3
+Questa sezione permette di mappare il content type per i file di tipo .mp3 .
 
 Se il file è modificato e se sul server gira il processo vxmlua --> Il processo vxmlua viene riavviato
 
