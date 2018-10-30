@@ -1,0 +1,16 @@
+---
+# handlers file for 6572
+
+- name: "vxmlua è attivo?"
+  shell: ps -ef | grep "/opt/reitek/vxml" | grep -v grep
+  failed_when: false
+  check_mode: false
+  changed_when: false
+  register: vxmlua_attivo_6572
+  listen: "restart_vxml_6572"
+
+
+- name: "Riavvio processo vxmlua"
+  include: handlers/restart_vxml_{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml 
+  when: vxmlua_attivo_6572.rc == 0
+  listen: "restart_vxml_6572"

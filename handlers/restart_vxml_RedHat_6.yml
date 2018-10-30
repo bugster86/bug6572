@@ -1,0 +1,1 @@
+- service: name=vxmlua1 state=restarted

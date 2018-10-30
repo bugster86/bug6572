@@ -1,0 +1,45 @@
+# tasks file for 6572
+- name: resoconto in file {{ logfile }}
+  shell: echo "Applicato il bug {{bug}} dall'utente $USER in data $(date +%d-%m-%Y_%H:%M:%S) sui server {{inventory_hostname}} " >> {{ logfile }}
+  delegate_to: localhost
+  changed_when: false
+- name: resoconto in database ansible
+  shell: mysql --user=ansible_update --password=$(cat /home/password_insert) -e "insert into ansible.bugs values ( '{{bug}}','$USER','$(date +%d-%m-%Y_%H:%M:%S)','{{inventory_hostname}}');"
+  delegate_to: localhost
+  changed_when: false
+
+- block:
+  - name: Conferma la volontà di voler procedere con questo playbook
+    pause: prompt='Questo playbook può riavviare il processo VXMLUA! Deve essere lanciato in fuori orario! Vuoi proseguire (yes/no)'
+    delegate_facts: true
+    register: conferma
+
+  - meta: end_play
+    when: not conferma.user_input == "yes" 
+  run_once: true
+  when: 
+  - not ansible_check_mode
+  - not (auto is defined and auto == true)
+  
+  delegate_to: localhost
+
+
+- stat: path=/usr/java/
+  register: javadir_6572
+
+- name: Recupera tutti i file content-types.properties delle JDK presenti sul server
+  shell: find /usr/java/ -name "content-types.properties"
+  check_mode: false
+  failed_when: false
+  changed_when: false
+  register: jdks_6572
+
+- block:
+
+  - include: modifica_content.yml
+    with_items:
+    - "{{ jdks_6572.stdout_lines }}"
+
+
+
+  when: javadir_6572.stat.exists

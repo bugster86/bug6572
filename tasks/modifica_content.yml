@@ -1,0 +1,19 @@
+- name: "ricerca la stringa mp3 all'interno del file {{ item }} "
+  shell: "grep mp3 {{ item }}"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: mp3_ok_6572
+
+- name: "Inserisco la sezione mp3 nel file {{ item }} "
+  blockinfile:
+        backup: true
+        path: "{{ item }}"
+        block: |
+                audio/mpeg: \
+                        description=Mpeg Audio;\
+                        file_extensions=.mp3;\
+                        icon=mp3
+  notify: restart_vxml_6572
+  when: mp3_ok_6572.rc != 0
+
